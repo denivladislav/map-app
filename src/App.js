@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // import cn from 'classnames';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import { setAppState } from './slices/appStateSlice.js';
 import { addFeature } from './slices/featuresSlice.js';
-import { useDispatch, useSelector } from 'react-redux';
+import { addMarkerToMap, getNewMarker } from './utils/utils.js';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
 
@@ -11,7 +12,7 @@ const App = () =>  {
   const dispatch = useDispatch();
   const appState = useSelector((state) => state.appState.appState);
   const features = useSelector((state) => state.features.features);
-  const isPlaceMarkerModeOn = appState === 'placeMarker';
+  const isPlaceFeatureState= appState === 'placeFeature';
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -21,6 +22,7 @@ const App = () =>  {
 
   useEffect(() => {
     if (map.current) return;
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
@@ -31,9 +33,13 @@ const App = () =>  {
 
   useEffect(() => {
     if (!map.current) return;
+
+    map.current.on('mousemove', ({lngLat}) => {
+      setLng(lngLat.lng.toFixed(4));
+      setLat(lngLat.lat.toFixed(4));
+    });
+
     map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
       setZoom(map.current.getZoom().toFixed(2));
     });
   });
@@ -41,60 +47,37 @@ const App = () =>  {
   useEffect(() => {
     if (features.length === 0) return;
 
-    const el = document.createElement('div');
-    el.className = 'marker';
-
-    const marker = features[features.length - 1];
-
-    new mapboxgl.Marker(el)
-      .setLngLat(marker.geometry.coordinates)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 })
-          .setHTML(
-            `<h3>${marker.properties.title}</h3><p>${marker.properties.description}</p>`
-          )
-      )
-      .addTo(map.current);
-
+    addMarkerToMap(map.current, features[features.length - 1]);
   }, [features]);
 
 
-  const handleClickButton = () => {
-    // добавить условие, при котором по повторному нажатию возвращается стейт в исходное положение
-    dispatch(setAppState('placeMarker'));
+  const handleClickAddMarkerButton = () => {
+    if (appState === 'placeFeature') {
+      dispatch(setAppState('surfing'));
+    } else {
+      dispatch(setAppState('placeFeature'));
+    }
   }
 
   const handleClickMap = () => {
-    if (!isPlaceMarkerModeOn) {
-      return;
-    }
+    if (!isPlaceFeatureState) return;
 
-    const marker = {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Point',
-        'coordinates': [lng, lat],
-      },
-      'properties': {
-        'title': 'Mapbox',
-        'description': `${lng}, ${lat}`,
-      }
-    }
+    const marker = getNewMarker(lng, lat);
 
     dispatch(addFeature(marker));
     dispatch(setAppState('surfing'));
   }
   
   return (
-    <div>
+    <>
       <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
       <div className="controlbar">
-        <button className={`${isPlaceMarkerModeOn ? 'yellow' : 'red'}`} onClick={handleClickButton}>Add Marker</button>
+        <button id="add-marker-button" className={`${isPlaceFeatureState ? 'yellow' : 'red'}`} onClick={handleClickAddMarkerButton}>Add Marker</button>
       </div>
-      <div id="map-container" ref={mapContainer} className={`map-container ${isPlaceMarkerModeOn ? 'cursor-default' : ''}`} onClick={handleClickMap} />
-    </div>
+      <div id="map-container" ref={mapContainer} className={`map-container ${isPlaceFeatureState ? 'cursor-default' : ''}`} onClick={handleClickMap} />
+    </>
   );
 }
 
