@@ -7,11 +7,11 @@ body {
 }
 
 .cursor-default .mapboxgl-canvas-container {
-  cursor: default;
+  cursor: crosshair;
 }
 
 .cursor-default .mapboxgl-canvas-container:active {
-  cursor: default;
+  cursor: crosshair;
 }
 
 .sidebar {
@@ -49,11 +49,11 @@ body {
   cursor: pointer;
 }
 
-.yellow {
+.pressed {
   background-color: grey;
 }
 
-.red {
+.default {
   background-color: white;
 }
 

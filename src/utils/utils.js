@@ -1,7 +1,7 @@
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 
-export const getNewMarker = (lng, lat) => (
-  {
+export const createNewMarker = ({lng, lat, map}) => {
+  const marker = {
     'type': 'Feature',
     'geometry': {
       'type': 'Point',
@@ -10,14 +10,13 @@ export const getNewMarker = (lng, lat) => (
     'properties': {
       'title': 'Marker',
       'description': `${lng}, ${lat}`,
-  }
-});
+    }
+  };
 
-export const addMarkerToMap = (map, marker) => {
   const el = document.createElement('div');
   el.className = 'marker';
 
-  new mapboxgl.Marker(el)
+  const newMarker = new mapboxgl.Marker(el)
     .setLngLat(marker.geometry.coordinates)
     .setPopup(
       new mapboxgl.Popup({ offset: 25 })
@@ -26,4 +25,45 @@ export const addMarkerToMap = (map, marker) => {
         )
     )
     .addTo(map);
+
+  return newMarker;
 }
+
+export const createNewLine = ({lineStart, lineEnd, map}) => {
+  console.log('lineStart', lineStart, 'lineEnd', lineEnd);
+  const line = {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [
+        lineStart,
+        lineEnd,
+      ]
+    },
+    'properties': {
+      'title': 'Line',
+      'description': `its a line`,
+    },
+  }
+
+  map.addSource('route', {
+    'type': 'geojson',
+    'data': line,
+  });
+
+  map.addLayer({
+    'id': `route`,
+    'type': 'line',
+    'source': 'route',
+    'layout': {
+        'line-join': 'round',
+        'line-cap': 'round'
+    },
+    'paint': {
+        'line-color': '#888',
+        'line-width': 8
+    }
+  });
+
+  return line;
+};
