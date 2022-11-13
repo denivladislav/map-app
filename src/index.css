@@ -1,5 +1,17 @@
+body {
+  margin: 0;
+}
+
 .map-container {
   height: 100vh;
+}
+
+.cursor-default .mapboxgl-canvas-container {
+  cursor: default;
+}
+
+.cursor-default .mapboxgl-canvas-container:active {
+  cursor: default;
 }
 
 .sidebar {
@@ -13,4 +25,43 @@
   left: 0;
   margin: 12px;
   border-radius: 4px;
+}
+
+.controlbar {
+  background-color: rgba(35, 55, 75, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  font-family: monospace;
+  z-index: 1;
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  margin: 12px;
+  border-radius: 4px;
+}
+
+.marker {
+  background-image: url('mapbox-icon.png');
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
+}
+
+.mapboxgl-popup {
+  max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
 }
