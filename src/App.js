@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 // import cn from 'classnames';
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { createNewMarker, createNewLine } from './utils/utils.js';
+import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import { createNewMarker, createNewLine } from './utils/utils.ts';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
 
@@ -70,7 +70,7 @@ const App = () =>  {
     if (!isPlacingMarkerState && !isPlacingLineState) return;
 
     if (isPlacingMarkerState) {
-      const newMarker = createNewMarker({lng, lat, map: map.current});
+      const newMarker = createNewMarker(lng, lat, map.current);
       setMarkers([...markers, newMarker]);
       setAppState('surfing');
     }
@@ -82,7 +82,7 @@ const App = () =>  {
 
     if (isPlacingLineEndState) {
       const lineEnd = [lng, lat];
-      const newLine = createNewLine({lineStart, lineEnd, map: map.current});
+      const newLine = createNewLine(lineStart, lineEnd, map.current);
       setLines([...lines, newLine]);
       setLineStart(null);
       setAppState('surfing');
