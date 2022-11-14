@@ -1,15 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 // import cn from 'classnames';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { setAppState } from './slices/appStateSlice.js';
 import { createNewMarker, createNewLine } from './utils/utils.js';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
 
 const App = () =>  {
-  const dispatch = useDispatch();
-  const appState = useSelector((state) => state.appState.appState);
+  const [appState, setAppState] = useState('surfing');
   const isPlaceMarkerState = appState === 'placeMarker';
   const isPlaceLineStartState = appState === 'placeLineStart';
   const isPlaceLineEndState = appState === 'placeLineEnd';
@@ -53,17 +50,17 @@ const App = () =>  {
 
   const handleClickAddMarkerButton = () => {
     if (isPlaceMarkerState) {
-      dispatch(setAppState('surfing'));
+      setAppState('surfing');
     } else {
-      dispatch(setAppState('placeMarker'));
+      setAppState('placeMarker');
     }
   }
 
   const handleClickAddLineButton = () => {
     if (isPlaceLineState) {
-      dispatch(setAppState('surfing'));
+      setAppState('surfing');
     } else {
-      dispatch(setAppState('placeLineStart'));
+      setAppState('placeLineStart');
     }
   }
 
@@ -73,13 +70,13 @@ const App = () =>  {
     if (isPlaceMarkerState) {
       const newMarker = createNewMarker({lng, lat, map: map.current});
       setMarkers([...markers, newMarker]);
-      dispatch(setAppState('surfing'));
+      setAppState('surfing');
     }
 
     if (isPlaceLineStartState) {
       console.log('Here1');
       setLineStart([lng, lat]);
-      dispatch(setAppState('placeLineEnd'));
+      setAppState('placeLineEnd');
     }
 
     if (isPlaceLineEndState) {
@@ -87,7 +84,7 @@ const App = () =>  {
       const newLine = createNewLine({lineStart, lineEnd, map: map.current});
       setLines([...lines, newLine]);
       setLineStart(null);
-      dispatch(setAppState('surfing'));
+      setAppState('surfing');
     }
   }
   

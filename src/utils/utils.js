@@ -30,7 +30,6 @@ export const createNewMarker = ({lng, lat, map}) => {
 }
 
 export const createNewLine = ({lineStart, lineEnd, map}) => {
-  console.log('lineStart', lineStart, 'lineEnd', lineEnd);
   const line = {
     'type': 'Feature',
     'geometry': {

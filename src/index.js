@@ -3,14 +3,10 @@ import ReactDOM from 'react-dom';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './assets/index.css';
 import App from './App';
-import store from './slices/index.js';
-import { Provider } from 'react-redux';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
