@@ -7,11 +7,11 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM
 
 const App = () =>  {
   const [appState, setAppState] = useState('surfing');
-  const isPlaceMarkerState = appState === 'placeMarker';
-  const isPlaceLineStartState = appState === 'placeLineStart';
-  const isPlaceLineEndState = appState === 'placeLineEnd';
-  const isPlaceLineState = isPlaceLineStartState || isPlaceLineEndState;
-  const isPlaceFeatureState = isPlaceMarkerState || isPlaceLineState;
+  const isPlacingMarkerState = appState === 'placingMarker';
+  const isPlacingLineStartState = appState === 'placingLineStart';
+  const isPlacingLineEndState = appState === 'placingLineEnd';
+  const isPlacingLineState = isPlacingLineStartState || isPlacingLineEndState;
+  const isPlacingFeatureState = isPlacingMarkerState || isPlacingLineState;
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -19,10 +19,12 @@ const App = () =>  {
   const [lat, setLat] = useState(55.75);
   const [zoom, setZoom] = useState(9);
 
-  const [lineStart, setLineStart] = useState(null);
-
   const [markers, setMarkers] = useState([]);
+  const [areMarkersVisible, setMarkersVisible] = useState(true);
+
   const [lines, setLines] = useState([]);
+  const [lineStart, setLineStart] = useState(null);
+  const [areLinesVisible, setLinesVisible] = useState(true);
 
   useEffect(() => {
     if (map.current) return;
@@ -49,43 +51,89 @@ const App = () =>  {
   });
 
   const handleClickAddMarkerButton = () => {
-    if (isPlaceMarkerState) {
+    if (isPlacingMarkerState) {
       setAppState('surfing');
     } else {
-      setAppState('placeMarker');
+      setAppState('placingMarker');
     }
   }
 
   const handleClickAddLineButton = () => {
-    if (isPlaceLineState) {
+    if (isPlacingLineState) {
       setAppState('surfing');
     } else {
-      setAppState('placeLineStart');
+      setAppState('placingLineStart');
     }
   }
 
   const handleClickMap = () => {
-    if (!isPlaceMarkerState && !isPlaceLineState) return;
+    if (!isPlacingMarkerState && !isPlacingLineState) return;
 
-    if (isPlaceMarkerState) {
+    if (isPlacingMarkerState) {
       const newMarker = createNewMarker({lng, lat, map: map.current});
       setMarkers([...markers, newMarker]);
       setAppState('surfing');
     }
 
-    if (isPlaceLineStartState) {
-      console.log('Here1');
+    if (isPlacingLineStartState) {
       setLineStart([lng, lat]);
-      setAppState('placeLineEnd');
+      setAppState('placingLineEnd');
     }
 
-    if (isPlaceLineEndState) {
+    if (isPlacingLineEndState) {
       const lineEnd = [lng, lat];
       const newLine = createNewLine({lineStart, lineEnd, map: map.current});
       setLines([...lines, newLine]);
       setLineStart(null);
       setAppState('surfing');
     }
+  }
+
+  const handleClickHideMarkersButton = () => {
+    markers.forEach((marker) => marker._element.style.visibility = areMarkersVisible ? 'hidden' : 'visible');
+    setMarkersVisible(!areMarkersVisible);
+  }
+
+  const handleClickRemoveMarkersButton = () => {
+    markers.forEach((marker) => marker.remove());
+    setMarkers([]);
+  }
+
+  const handleClickHideLinesButton = () => {
+    lines.forEach(({lineId}) => map.current.setLayoutProperty(lineId, 'visibility', areLinesVisible ? 'none': 'visible'));
+    setLinesVisible(!areLinesVisible);
+  }
+
+  const handleClickRemoveLinesButton = () => {
+    lines.forEach(({lineId, lineSourceId}) => {
+      map.current.removeLayer(lineId);
+      map.current.removeSource(lineSourceId);
+    });
+    setLines([]);
+  }
+
+  const renderHideMarkersButton = () => {
+    return (
+      <button id="hide-markers-button" onClick={handleClickHideMarkersButton}>{areMarkersVisible ? 'Hide markers' : 'Show markers'}</button>
+    );
+  }
+
+  const renderRemoveMarkersButton = () => {
+    return (
+      <button id="remove-markers-button" onClick={handleClickRemoveMarkersButton}>Remove markers</button>
+    );
+  }
+
+  const renderHideLinesButton = () => {
+    return (
+      <button id="remove-lines-button" onClick={handleClickHideLinesButton}>{areLinesVisible ? 'Hide lines' : 'Show lines'}</button>
+    );
+  }
+
+  const renderRemoveLinesButton = () => {
+    return (
+      <button id="remove-lines-button" onClick={handleClickRemoveLinesButton}>Remove lines</button>
+    );
   }
   
   return (
@@ -94,10 +142,14 @@ const App = () =>  {
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
       <div className="controlbar">
-        <button id="add-marker-button" className={`${isPlaceMarkerState ? 'pressed' : 'default'}`} onClick={handleClickAddMarkerButton}>Add Marker</button>
-        <button id="add-line-button" className={`${isPlaceLineState ? 'pressed' : 'default'}`} onClick={handleClickAddLineButton}>Add Line</button>
+        <button id="add-marker-button" className={`${isPlacingMarkerState ? 'pressed' : 'default'}`} onClick={handleClickAddMarkerButton}>Add Marker</button>
+        {markers.length > 0 && renderHideMarkersButton()}
+        {markers.length > 0 && renderRemoveMarkersButton()}
+        <button id="add-line-button" className={`${isPlacingLineState ? 'pressed' : 'default'}`} onClick={handleClickAddLineButton}>Add Line</button>
+        {lines.length > 0 && renderHideLinesButton()}
+        {lines.length > 0 && renderRemoveLinesButton()}
       </div>
-      <div id="map-container" ref={mapContainer} className={`map-container ${isPlaceFeatureState ? 'cursor-default' : ''}`} onClick={handleClickMap} />
+      <div id="map-container" ref={mapContainer} className={`map-container ${isPlacingFeatureState ? 'cursor-default' : ''}`} onClick={handleClickMap} />
     </>
   );
 }

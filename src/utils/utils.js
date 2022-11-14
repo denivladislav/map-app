@@ -29,31 +29,36 @@ export const createNewMarker = ({lng, lat, map}) => {
   return newMarker;
 }
 
+let counter = 0;
+
 export const createNewLine = ({lineStart, lineEnd, map}) => {
-  const line = {
+  const newLine = {
     'type': 'Feature',
     'geometry': {
       'type': 'LineString',
       'coordinates': [
-        lineStart,
-        lineEnd,
-      ]
-    },
+          lineStart,
+          lineEnd,
+        ]
+      },
     'properties': {
       'title': 'Line',
       'description': `its a line`,
     },
   }
 
-  map.addSource('route', {
+  const newLineId = `line-${counter}`;
+  const newLineSourceId = `line-${counter}-source`;
+
+  map.addSource(newLineSourceId, {
     'type': 'geojson',
-    'data': line,
+    'data': newLine,
   });
 
   map.addLayer({
-    'id': `route`,
+    'id': newLineId,
     'type': 'line',
-    'source': 'route',
+    'source': newLineSourceId,
     'layout': {
         'line-join': 'round',
         'line-cap': 'round'
@@ -64,5 +69,7 @@ export const createNewLine = ({lineStart, lineEnd, map}) => {
     }
   });
 
-  return line;
+  counter += 1;
+
+  return {lineId: newLineId, lineSourceId: newLineSourceId};
 };
