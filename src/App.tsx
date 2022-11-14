@@ -1,36 +1,44 @@
 import React, { useRef, useEffect, useState } from 'react';
-// import cn from 'classnames';
-import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { createNewMarker, createNewLine } from './utils/utils.ts';
+import mapboxgl, { Map, Marker } from 'mapbox-gl';
+import { createNewMarker, createNewLine, Line } from './utils/utils';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
 
+enum AppStates {
+  'SURFING',
+  'PLACING_MARKER',
+  'PLACING_LINE_START',
+  'PLACING_LINE_END',
+}
+
+type AppState = keyof typeof AppStates;
+
 const App = () =>  {
-  const [appState, setAppState] = useState('surfing');
-  const isPlacingMarkerState = appState === 'placingMarker';
-  const isPlacingLineStartState = appState === 'placingLineStart';
-  const isPlacingLineEndState = appState === 'placingLineEnd';
+  const [appState, setAppState] = useState<AppState>('SURFING');
+  const isPlacingMarkerState = appState === 'PLACING_MARKER';
+  const isPlacingLineStartState = appState === 'PLACING_LINE_START';
+  const isPlacingLineEndState = appState === 'PLACING_LINE_END';
   const isPlacingLineState = isPlacingLineStartState || isPlacingLineEndState;
   const isPlacingFeatureState = isPlacingMarkerState || isPlacingLineState;
 
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const [lng, setLng] = useState(37.6);
-  const [lat, setLat] = useState(55.75);
-  const [zoom, setZoom] = useState(9);
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const map = useRef<Map | null>(null);
+  const [lng, setLng] = useState<number>(37.6);
+  const [lat, setLat] = useState<number>(55.75);
+  const [zoom, setZoom] = useState<number>(9);
 
-  const [markers, setMarkers] = useState([]);
-  const [areMarkersVisible, setMarkersVisible] = useState(true);
+  const [markers, setMarkers] = useState<Marker[]>([]);
+  const [areMarkersVisible, setMarkersVisible] = useState<boolean>(true);
 
-  const [lines, setLines] = useState([]);
-  const [lineStart, setLineStart] = useState(null);
-  const [areLinesVisible, setLinesVisible] = useState(true);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [lineStart, setLineStart] = useState<number[]>([]);
+  const [areLinesVisible, setLinesVisible] = useState<boolean>(true);
 
   useEffect(() => {
     if (map.current) return;
 
     map.current = new mapboxgl.Map({
-      container: mapContainer.current,
+      container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [lng, lat],
       zoom: zoom
@@ -41,28 +49,28 @@ const App = () =>  {
     if (!map.current) return;
 
     map.current.on('mousemove', ({lngLat}) => {
-      setLng(lngLat.lng.toFixed(4));
-      setLat(lngLat.lat.toFixed(4));
+      setLng(Number(lngLat.lng.toFixed(4)));
+      setLat(Number(lngLat.lat.toFixed(4)));
     });
 
     map.current.on('move', () => {
-      setZoom(map.current.getZoom().toFixed(2));
+      setZoom(Number(map.current!.getZoom().toFixed(2)));
     });
   });
 
   const handleClickAddMarkerButton = () => {
     if (isPlacingMarkerState) {
-      setAppState('surfing');
+      setAppState('SURFING');
     } else {
-      setAppState('placingMarker');
+      setAppState('PLACING_MARKER');
     }
   }
 
   const handleClickAddLineButton = () => {
     if (isPlacingLineState) {
-      setAppState('surfing');
+      setAppState('SURFING');
     } else {
-      setAppState('placingLineStart');
+      setAppState('PLACING_LINE_START');
     }
   }
 
@@ -70,27 +78,32 @@ const App = () =>  {
     if (!isPlacingMarkerState && !isPlacingLineState) return;
 
     if (isPlacingMarkerState) {
-      const newMarker = createNewMarker(lng, lat, map.current);
+      const newMarker = createNewMarker(lng, lat, map.current!);
       setMarkers([...markers, newMarker]);
-      setAppState('surfing');
+      setAppState('SURFING');
     }
 
     if (isPlacingLineStartState) {
       setLineStart([lng, lat]);
-      setAppState('placingLineEnd');
+      setAppState('PLACING_LINE_END');
     }
 
     if (isPlacingLineEndState) {
       const lineEnd = [lng, lat];
-      const newLine = createNewLine(lineStart, lineEnd, map.current);
+      const newLine = createNewLine(lineStart, lineEnd, map.current!);
       setLines([...lines, newLine]);
-      setLineStart(null);
-      setAppState('surfing');
+      setLineStart([]);
+      setAppState('SURFING');
     }
   }
 
   const handleClickHideMarkersButton = () => {
-    markers.forEach((marker) => marker._element.style.visibility = areMarkersVisible ? 'hidden' : 'visible');
+    markers.forEach((marker) => {
+      marker.remove();
+      if (!areMarkersVisible) {
+        marker.addTo(map.current!);
+      }
+    });
     setMarkersVisible(!areMarkersVisible);
   }
 
@@ -100,14 +113,15 @@ const App = () =>  {
   }
 
   const handleClickHideLinesButton = () => {
-    lines.forEach(({lineId}) => map.current.setLayoutProperty(lineId, 'visibility', areLinesVisible ? 'none': 'visible'));
+    lines.forEach(({lineId}) => map.current?.setLayoutProperty(lineId, 'visibility', areLinesVisible ? 'none': 'visible'));
     setLinesVisible(!areLinesVisible);
   }
 
   const handleClickRemoveLinesButton = () => {
-    lines.forEach(({lineId, lineSourceId}) => {
-      map.current.removeLayer(lineId);
-      map.current.removeSource(lineSourceId);
+    lines.forEach(({lineId, lineSourceId, popup}) => {
+      map.current?.removeLayer(lineId);
+      map.current?.removeSource(lineSourceId);
+      popup.remove();
     });
     setLines([]);
   }

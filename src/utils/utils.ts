@@ -1,4 +1,10 @@
-import mapboxgl, { Marker, Map, EventData } from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import mapboxgl, { Marker, Map, EventData, Popup } from 'mapbox-gl';
+
+export interface Line {
+  lineId: string,
+  lineSourceId: string,
+  popup: Popup,
+}
 
 const getFormattedCurrentDate = (): string => {
   const now = new Date();
@@ -8,7 +14,7 @@ const getFormattedCurrentDate = (): string => {
 
 export const createNewMarker = (lng: number, lat: number, map: Map): Marker => {
   const markerDescription = getFormattedCurrentDate();
-  const markerTitle = 'Marker;'
+  const markerTitle = 'Marker';
 
   const el = document.createElement('div');
   el.className = 'marker';
@@ -28,8 +34,8 @@ export const createNewMarker = (lng: number, lat: number, map: Map): Marker => {
 
 let counter = 0;
 
-export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map) => {
-  const newLine: GeoJSON.Feature = {
+export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map): Line => {
+  const line: GeoJSON.Feature = {
     type: 'Feature',
     geometry: {
       type: 'LineString',
@@ -44,18 +50,18 @@ export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map) 
     },
   }
 
-  const newLineId = `line-${counter}`;
-  const newLineSourceId = `line-${counter}-source`;
+  const lineId = `line-${counter}`;
+  const lineSourceId = `line-${counter}-source`;
 
-  map.addSource(newLineSourceId, {
+  map.addSource(lineSourceId, {
     type: 'geojson',
-    data: newLine,
+    data: line,
   });
 
   map.addLayer({
-    id: newLineId,
+    id: lineId,
     type: 'line',
-    source: newLineSourceId,
+    source: lineSourceId,
     layout: {
       'line-join': 'round',
       'line-cap': 'round'
@@ -66,25 +72,27 @@ export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map) 
     }
   });
 
-  map.on('click', newLineId, (e: EventData) => {
+  const popup = new mapboxgl.Popup();
+
+  map.on('click', lineId, (e: EventData) => {
     const coordinates = e.features[0].geometry.coordinates.slice();
-    new mapboxgl.Popup()
+    popup
       .setLngLat(coordinates[0])
       .setHTML((
-        `<h3>${newLine.properties?.title}</h3><p>${newLine.properties?.description}</p>`
+        `<h3>${line.properties?.title}</h3><p>${line.properties?.description}</p>`
       ))
       .addTo(map);
   });
 
-  map.on('mouseenter', newLineId, () => {
+  map.on('mouseenter', lineId, () => {
     map.getCanvas().style.cursor = 'pointer';
   });
 
-  map.on('mouseleave', newLineId, () => {
+  map.on('mouseleave', lineId, () => {
     map.getCanvas().style.cursor = '';
   });
 
   counter += 1;
 
-  return {lineId: newLineId, lineSourceId: newLineSourceId};
+  return {lineId, lineSourceId, popup};
 };
