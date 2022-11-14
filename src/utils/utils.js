@@ -1,5 +1,11 @@
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 
+const getFormattedCurrentDate = () => {
+  const now = new Date();
+  const [month, day, year] = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+  return `${day}.${month}.${year}`;
+}
+
 export const createNewMarker = ({lng, lat, map}) => {
   const marker = {
     'type': 'Feature',
@@ -9,7 +15,7 @@ export const createNewMarker = ({lng, lat, map}) => {
     },
     'properties': {
       'title': 'Marker',
-      'description': `${lng}, ${lat}`,
+      'description': getFormattedCurrentDate(),
     }
   };
 
@@ -43,7 +49,7 @@ export const createNewLine = ({lineStart, lineEnd, map}) => {
       },
     'properties': {
       'title': 'Line',
-      'description': `its a line`,
+      'description': getFormattedCurrentDate(),
     },
   }
 
@@ -70,12 +76,12 @@ export const createNewLine = ({lineStart, lineEnd, map}) => {
   });
 
   map.on('click', newLineId, (e) => {
-    const description = 'Sample text';
     const coordinates = e.features[0].geometry.coordinates.slice();
-    console.log(coordinates);
     new mapboxgl.Popup()
       .setLngLat(coordinates[0])
-      .setHTML(description)
+      .setHTML((
+        `<h3>${newLine.properties.title}</h3><p>${newLine.properties.description}</p>`
+      ))
       .addTo(map);
   });
 
