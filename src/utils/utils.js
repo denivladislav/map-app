@@ -69,6 +69,24 @@ export const createNewLine = ({lineStart, lineEnd, map}) => {
     }
   });
 
+  map.on('click', newLineId, (e) => {
+    const description = 'Sample text';
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    console.log(coordinates);
+    new mapboxgl.Popup()
+      .setLngLat(coordinates[0])
+      .setHTML(description)
+      .addTo(map);
+  });
+
+  map.on('mouseenter', newLineId, () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+     
+  map.on('mouseleave', newLineId, () => {
+    map.getCanvas().style.cursor = '';
+  });
+
   counter += 1;
 
   return {lineId: newLineId, lineSourceId: newLineSourceId};
