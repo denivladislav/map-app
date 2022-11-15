@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl, { Map, Marker } from 'mapbox-gl';
-import { Sidebar } from './components/Sidebar';
-import { Controlbar } from './components/Controlbar';
-import { MapContainer } from './components/MapContainer';
-import { Line, AppState, AppStates } from './helpers/types';
+import { Sidebar } from './Sidebar';
+import { Controlbar } from './Controlbar';
+import { MapContainer } from './MapContainer';
+import { Line, AppState, AppStates } from '../helpers/types';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
 

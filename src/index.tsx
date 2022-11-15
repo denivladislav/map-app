@@ -1,12 +1,11 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './assets/index.css';
-import App from './App';
+import init from './init';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const render = async (): Promise<void> => {
+  const vdom = await init();
+  ReactDOM.render(vdom, document.getElementById('root'));
+}
+
+render();

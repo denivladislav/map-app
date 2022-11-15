@@ -1,0 +1,21 @@
+{
+  "divider": " | ",
+  "sidebar": {
+    "longitude": "Longitude: {{ longitude }}",
+    "latitude": "Latitude: {{ lat }}",
+    "zoom": "Zoom: {{ zoom }}"
+  },
+  "controlbar": {
+    "addMarker": "Add marker",
+    "hideMarkers": "Hide markers",
+    "showMarkers": "Show markers",
+    "removeMarkers": "Remove markers",
+    "addLine": "Add line",
+    "hideLines": "Hide lines",
+    "showLines": "Show lines",
+    "removeLines": "Remove lines"
+  },
+  "helpbar": {
+    "placeLineHelper": "Place line {{ point }} point"
+  }
+}

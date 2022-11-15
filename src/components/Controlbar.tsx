@@ -3,6 +3,7 @@ import { Marker } from 'mapbox-gl';
 import { AppState, AppStates, Line } from '../helpers/types';
 import { isEmpty } from 'lodash';
 import cn from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 interface IControlbarProps {
   appState: AppState,
@@ -18,6 +19,7 @@ interface IControlbarProps {
 }
 
 export const Controlbar = ({appState, setAppState, areMarkersVisible, setMarkersVisible, markers, setMarkers, areLinesVisible, setLinesVisible, lines, setLines}: IControlbarProps): JSX.Element => {
+  const { t } = useTranslation();
   const isPlacingMarkerState = appState === AppStates.PLACING_MARKER;
   const isPlacingLineStartState = appState === AppStates.PLACING_LINE_START;
   const isPlacingLineEndState = appState === AppStates.PLACING_LINE_END;
@@ -52,28 +54,44 @@ export const Controlbar = ({appState, setAppState, areMarkersVisible, setMarkers
 
   const handleClickRemoveLinesButton = () => setLines([]);
 
-  const renderAddMarkerButton = () => <button id="add-marker-button" className={cn('btn', 'mb-10', {'btn-pressed': isPlacingMarkerState})} onClick={handleClickAddMarkerButton}>Add Marker</button>
+  const renderAddMarkerButton = () => (
+    <button id="add-marker-button" className={cn('btn', 'mb-10', {'btn-pressed': isPlacingMarkerState})} onClick={handleClickAddMarkerButton}>
+      {t('controlbar.addMarker')}
+    </button>
+  );
 
   const renderExtraMarkerButtons = () => {
     if (!shouldExtraMarkerButtonsRender) return null;
 
     return (
       <>
-        <button className='btn mb-10' id="hide-markers-button" onClick={handleClickHideMarkersButton}>{areMarkersVisible ? 'Hide markers' : 'Show markers'}</button>
-        <button className='btn mb-10' id="remove-markers-button" onClick={handleClickRemoveMarkersButton}>Remove markers</button>
+        <button className='btn mb-10' id="hide-markers-button" onClick={handleClickHideMarkersButton}>
+          {t(areMarkersVisible ? 'controlbar.hideMarkers': 'controlbar.showMarkers')}
+        </button>
+        <button className='btn mb-10' id="remove-markers-button" onClick={handleClickRemoveMarkersButton}>
+          {t('controlbar.removeMarkers')}
+        </button>
       </>
     );
   };
 
-  const renderAddLineButton = () => <button id="add-line-button" className={cn('btn', {'btn-pressed': isPlacingLineState, 'mb-10': shouldExtraLineButtonsRender})} onClick={handleClickAddLineButton}>Add Line</button>
+  const renderAddLineButton = () => (
+    <button id="add-line-button" className={cn('btn', {'btn-pressed': isPlacingLineState, 'mb-10': shouldExtraLineButtonsRender})} onClick={handleClickAddLineButton}>
+      {t('controlbar.addLine')}
+    </button>
+  );
 
   const renderExtraLineButtons = () => {
     if (!shouldExtraLineButtonsRender) return null;
 
     return (
       <>
-        <button className='btn mb-10' id="hide-lines-button" onClick={handleClickHideLinesButton}>{areLinesVisible ? 'Hide lines' : 'Show lines'}</button>
-        <button className='btn' id="remove-lines-button" onClick={handleClickRemoveLinesButton}>Remove lines</button>
+        <button className='btn mb-10' id="hide-lines-button" onClick={handleClickHideLinesButton}>
+          {areLinesVisible ? t('controlbar.hideLines') : t('controlbar.showLines')}
+        </button>
+        <button className='btn' id="remove-lines-button" onClick={handleClickRemoveLinesButton}>
+          {t('controlbar.removeLines')}
+        </button>
       </>
     );
   }
@@ -83,7 +101,7 @@ export const Controlbar = ({appState, setAppState, areMarkersVisible, setMarkers
 
     return (
       <div className="sidebar sidebar-helper">
-        {`Place line ${isPlacingLineStartState ? 'starting' : 'ending'} point`}
+        {t('helpbar.placeLineHelper', {point: isPlacingLineStartState ? 'starting' : 'ending'})}
       </div>
     )
   }
