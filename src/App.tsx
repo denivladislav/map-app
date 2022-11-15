@@ -1,23 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl, { Map, Marker } from 'mapbox-gl';
-import { Line } from './helpers/utils';
 import { Sidebar } from './components/Sidebar';
 import { Controlbar } from './components/Controlbar';
 import { MapContainer } from './components/MapContainer';
+import { Line, AppState, AppStates } from './helpers/types';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
 
-export enum EAppStates {
-  'SURFING' = 'SURFING',
-  'PLACING_MARKER' = "PLACING_MARKER",
-  'PLACING_LINE_START' = 'PLACING_LINE_START',
-  'PLACING_LINE_END' = 'PLACING_LINE_END',
-}
-
-export type TAppState = keyof typeof EAppStates;
-
 const App = (): JSX.Element =>  {
-  const [appState, setAppState] = useState<TAppState>(EAppStates.SURFING);
+  const [appState, setAppState] = useState<AppState>(AppStates.SURFING);
   const [lng, setLng] = useState<number>(37.6);
   const [lat, setLat] = useState<number>(55.75);
   const [zoom, setZoom] = useState<number>(9);
@@ -108,8 +99,8 @@ const App = (): JSX.Element =>  {
   return (
     <>
       <Sidebar lng={lng} lat={lat} zoom={zoom} />
-      <Controlbar appState={appState} setAppState={setAppState} areMarkersVisible={areMarkersVisible} setMarkersVisible={setMarkersVisible} markers={markers} areLinesVisible={areLinesVisible} setLinesVisible={setLinesVisible} lines={lines} setLines={setLines} setMarkers={setMarkers} map={map.current!} />
-      <MapContainer appState={appState} setAppState={setAppState} markers={markers} setMarkers={setMarkers} lines={lines} setLines={setLines} lng={lng} lat={lat} map={map.current!} ref={mapContainer}/>
+      <Controlbar appState={appState} setAppState={setAppState} areMarkersVisible={areMarkersVisible} setMarkersVisible={setMarkersVisible} markers={markers} areLinesVisible={areLinesVisible} setLinesVisible={setLinesVisible} lines={lines} setLines={setLines} setMarkers={setMarkers} />
+      <MapContainer appState={appState} setAppState={setAppState} markers={markers} setMarkers={setMarkers} lines={lines} setLines={setLines} lng={lng} lat={lat} ref={mapContainer}/>
     </>
   );
 }

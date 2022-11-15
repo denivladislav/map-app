@@ -1,24 +1,23 @@
-import { Marker, Map } from 'mapbox-gl';
+import { Marker } from 'mapbox-gl';
 import React, {useState, Dispatch, SetStateAction}  from 'react';
-import { EAppStates, TAppState } from '../App';
-import { createNewLine, createNewMarker, Line } from '../helpers/utils';
+import { AppState, AppStates, Line } from '../helpers/types';
+import { createNewLine, createNewMarker } from '../helpers/utils';
 
 interface IMapProps {
-  appState: TAppState,
-  setAppState: Dispatch<SetStateAction<TAppState>>,
+  appState: AppState,
+  setAppState: Dispatch<SetStateAction<AppState>>,
   markers: Marker[],
   setMarkers: Dispatch<SetStateAction<Marker[]>>,
   lines: Line[],
   setLines: Dispatch<SetStateAction<Line[]>>,
-  map: Map,
   lng: number,
   lat: number,
 }
 
-export const MapContainer = React.forwardRef<HTMLDivElement, IMapProps>(({appState, setAppState, markers, setMarkers, lines, setLines, map, lng, lat}, ref) => {
-  const isPlacingMarkerState = appState === EAppStates.PLACING_MARKER;
-  const isPlacingLineStartState = appState === EAppStates.PLACING_LINE_START;
-  const isPlacingLineEndState = appState === EAppStates.PLACING_LINE_END;
+export const MapContainer = React.forwardRef<HTMLDivElement, IMapProps>(({appState, setAppState, markers, setMarkers, lines, setLines, lng, lat}, ref) => {
+  const isPlacingMarkerState = appState === AppStates.PLACING_MARKER;
+  const isPlacingLineStartState = appState === AppStates.PLACING_LINE_START;
+  const isPlacingLineEndState = appState === AppStates.PLACING_LINE_END;
   const isPlacingLineState = isPlacingLineStartState || isPlacingLineEndState;
   const isPlacingFeatureState = isPlacingMarkerState || isPlacingLineState;
 
@@ -28,22 +27,22 @@ export const MapContainer = React.forwardRef<HTMLDivElement, IMapProps>(({appSta
     if (!isPlacingMarkerState && !isPlacingLineState) return;
 
     if (isPlacingMarkerState) {
-      const newMarker = createNewMarker(lng, lat, map);
+      const newMarker = createNewMarker(lng, lat);
       setMarkers([...markers, newMarker]);
-      setAppState(EAppStates.SURFING);
+      setAppState(AppStates.SURFING);
     }
 
     if (isPlacingLineStartState) {
       setLineStart([lng, lat]);
-      setAppState(EAppStates.PLACING_LINE_END);
+      setAppState(AppStates.PLACING_LINE_END);
     }
 
     if (isPlacingLineEndState) {
       const lineEnd = [lng, lat];
-      const newLine = createNewLine(lineStart, lineEnd, map);
+      const newLine = createNewLine(lineStart, lineEnd);
       setLines([...lines, newLine]);
       setLineStart([]);
-      setAppState(EAppStates.SURFING);
+      setAppState(AppStates.SURFING);
     }
   }
 

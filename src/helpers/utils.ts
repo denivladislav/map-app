@@ -1,12 +1,5 @@
-import mapboxgl, { Marker, Map, Popup, LngLatLike, AnySourceData, AnyLayer } from 'mapbox-gl';
-
-export interface Line {
-  lineSource: AnySourceData,
-  lineLayer: AnyLayer,
-  lineId: string,
-  lineSourceId: string,
-  popup: Popup,
-}
+import mapboxgl, { Marker, LngLatLike, AnySourceData, AnyLayer } from 'mapbox-gl';
+import { Line } from './types';
 
 const getFormattedCurrentDate = (): string => {
   const now = new Date();
@@ -14,7 +7,7 @@ const getFormattedCurrentDate = (): string => {
   return `${day}.${month}.${year}`;
 }
 
-export const createNewMarker = (lng: number, lat: number, map: Map): Marker => {
+export const createNewMarker = (lng: number, lat: number): Marker => {
   const markerDescription = getFormattedCurrentDate();
   const markerTitle = 'Marker';
 
@@ -35,7 +28,7 @@ export const createNewMarker = (lng: number, lat: number, map: Map): Marker => {
 
 let counter = 0;
 
-export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map): Line => {
+export const createNewLine = (lineStart: number[], lineEnd: number[]): Line => {
   const lineData: GeoJSON.Feature = {
     type: 'Feature',
     geometry: {
