@@ -3,6 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "description": "map app react",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts,jsx,tsx}": [
+      "npx prettier --write --single-quote",
+      "eslint --fix"
+    ]
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.0",
     "@types/jest": "^29.2.2",
@@ -39,6 +50,8 @@
   "author": "denivladislav",
   "license": "MIT",
   "devDependencies": {
-    "@redux-devtools/core": "^3.13.1"
+    "@redux-devtools/core": "^3.13.1",
+    "husky": "^4.3.8",
+    "lint-staged": "^13.0.3"
   }
 }
