@@ -8,7 +8,7 @@ interface ISidebarProps {
 
 export const Sidebar = ({lng, lat, zoom}: ISidebarProps): JSX.Element => {
   return (
-    <div className="sidebar">
+    <div className="sidebar sidebar-top-left">
       Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
     </div>
   );

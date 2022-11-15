@@ -2,6 +2,7 @@ import { Marker } from 'mapbox-gl';
 import React, {useState, Dispatch, SetStateAction}  from 'react';
 import { AppState, AppStates, Line } from '../helpers/types';
 import { createNewLine, createNewMarker } from '../helpers/utils';
+import cn from 'classnames';
 
 interface IMapContainerProps {
   appState: AppState,
@@ -46,5 +47,5 @@ export const MapContainer = React.forwardRef<HTMLDivElement, IMapContainerProps>
     }
   }
 
-  return <div id="map-container" ref={ref} className={`map-container ${isPlacingFeatureState ? 'cursor-default' : ''}`} onClick={handleClickMap} />
+  return <div id="map-container" ref={ref} className={cn('map-container', {'cursor-crosshair': isPlacingFeatureState})} onClick={handleClickMap} />
 });

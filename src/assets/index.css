@@ -6,11 +6,28 @@ body {
   height: 100vh;
 }
 
-.cursor-default .mapboxgl-canvas-container {
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  background-color: #FAFBFC;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-pressed {
+  background-color: grey;
+}
+
+.cursor-crosshair .mapboxgl-canvas-container {
   cursor: crosshair;
 }
 
-.cursor-default .mapboxgl-canvas-container:active {
+.cursor-crosshair .mapboxgl-canvas-container:active {
   cursor: crosshair;
 }
 
@@ -20,9 +37,6 @@ body {
   padding: 6px 12px;
   font-family: monospace;
   z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
   margin: 12px;
   border-radius: 4px;
 }
@@ -33,11 +47,20 @@ body {
   padding: 6px 12px;
   font-family: monospace;
   z-index: 1;
+  margin: 12px;
+  border-radius: 4px;
+}
+
+.sidebar-top-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sidebar-top-right {
   position: absolute;
   top: 0;
   right: 0;
-  margin: 12px;
-  border-radius: 4px;
 }
 
 .marker {
@@ -47,14 +70,6 @@ body {
   height: 50px;
   border-radius: 50%;
   cursor: pointer;
-}
-
-.pressed {
-  background-color: grey;
-}
-
-.default {
-  background-color: white;
 }
 
 .mapboxgl-popup {
