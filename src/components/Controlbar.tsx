@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction }  from 'react';
 import { Marker } from 'mapbox-gl';
 import { AppState, AppStates, Line } from '../helpers/types';
+import { isEmpty } from 'lodash';
 
 interface IControlbarProps {
   appState: AppState,
@@ -21,8 +22,8 @@ export const Controlbar = ({appState, setAppState, areMarkersVisible, setMarkers
   const isPlacingLineEndState = appState === AppStates.PLACING_LINE_END;
   const isPlacingLineState = isPlacingLineStartState || isPlacingLineEndState;
 
-  const shouldExtraMarkerButtonsRender = markers.length > 0;
-  const shouldExtraLineButtonsRender = lines.length > 0;
+  const shouldExtraMarkerButtonsRender = !isEmpty(markers);
+  const shouldExtraLineButtonsRender = !isEmpty(lines);
 
   const handleClickAddMarkerButton = () => {
     if (isPlacingMarkerState) {

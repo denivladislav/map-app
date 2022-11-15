@@ -50,6 +50,8 @@ const App = (): JSX.Element =>  {
   });
 
   useEffect(() => {
+    if (!map.current) return;
+
     prevMarkersRef.current?.forEach((marker) => {
       marker.remove();
     })
@@ -66,6 +68,8 @@ const App = (): JSX.Element =>  {
   }, [markers]);
 
   useEffect(() => {
+    if (!map.current) return;
+
     prevLinesRef.current?.forEach(({lineId, lineSourceId, popup}) => {
       map.current?.removeLayer(lineId);
       map.current?.removeSource(lineSourceId);

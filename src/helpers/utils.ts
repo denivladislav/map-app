@@ -1,5 +1,5 @@
 import mapboxgl, { Marker, LngLatLike, AnySourceData, AnyLayer } from 'mapbox-gl';
-import { mean } from 'lodash';
+import { mean, uniqueId } from 'lodash';
 import { Line } from './types';
 
 const getFormattedCurrentDate = (): string => {
@@ -14,7 +14,7 @@ const getLineMid = ([lngStart, latStart]: number[], [lngEnd, latEnd]: number[]):
 
 export const createNewMarker = (lng: number, lat: number): Marker => {
   const markerDescription = getFormattedCurrentDate();
-  const markerTitle = 'Marker';
+  const markerId = uniqueId('marker-')
 
   const el = document.createElement('div');
   el.className = 'marker';
@@ -24,17 +24,17 @@ export const createNewMarker = (lng: number, lat: number): Marker => {
     .setPopup(
       new mapboxgl.Popup({ offset: 25 })
         .setHTML(
-          `<h3>${markerTitle}</h3><p>${markerDescription}</p>`
+          `<h3>${markerId}</h3><p>${markerDescription}</p>`
         )
     )
 
   return newMarker;
 }
 
-let counter = 0;
-
 export const createNewLine = (lineStart: number[], lineEnd: number[]): Line => {
-  getLineMid(lineStart, lineEnd);
+  const lineId = uniqueId('line-');
+  const lineSourceId = `${lineId}-source`;
+
   const lineData: GeoJSON.Feature = {
     type: 'Feature',
     geometry: {
@@ -45,17 +45,15 @@ export const createNewLine = (lineStart: number[], lineEnd: number[]): Line => {
         ]
       },
     properties: {
-      title: 'Line',
+      title: lineId,
       description: getFormattedCurrentDate(),
     },
   }
 
-  const lineId = `line-${counter}`;
-  const lineSourceId = `line-${counter}-source`;
   const popup = new mapboxgl.Popup()
     .setLngLat(getLineMid(lineStart, lineEnd))
     .setHTML((
-      `<h3>${lineData.properties?.title}</h3><p>${lineData.properties?.description}</p>`
+      `<h3>${lineData.properties!.title}</h3><p>${lineData.properties!.description}</p>`
     ))
 
   const lineSource: AnySourceData = {
@@ -69,15 +67,13 @@ export const createNewLine = (lineStart: number[], lineEnd: number[]): Line => {
     source: lineSourceId,
     layout: {
       'line-join': 'round',
-      'line-cap': 'round'
+      'line-cap': 'round',
     },
     paint: {
       'line-color': '#888',
-      'line-width': 8
+      'line-width': 8,
     }
   }
-
-  counter += 1;
 
   return {lineId, lineSource, lineLayer, lineSourceId, popup};
 };
