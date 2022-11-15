@@ -3,7 +3,7 @@ import React, {useState, Dispatch, SetStateAction}  from 'react';
 import { AppState, AppStates, Line } from '../helpers/types';
 import { createNewLine, createNewMarker } from '../helpers/utils';
 
-interface IMapProps {
+interface IMapContainerProps {
   appState: AppState,
   setAppState: Dispatch<SetStateAction<AppState>>,
   markers: Marker[],
@@ -14,7 +14,7 @@ interface IMapProps {
   lat: number,
 }
 
-export const MapContainer = React.forwardRef<HTMLDivElement, IMapProps>(({appState, setAppState, markers, setMarkers, lines, setLines, lng, lat}, ref) => {
+export const MapContainer = React.forwardRef<HTMLDivElement, IMapContainerProps>(({appState, setAppState, markers, setMarkers, lines, setLines, lng, lat}, ref) => {
   const isPlacingMarkerState = appState === AppStates.PLACING_MARKER;
   const isPlacingLineStartState = appState === AppStates.PLACING_LINE_START;
   const isPlacingLineEndState = appState === AppStates.PLACING_LINE_END;

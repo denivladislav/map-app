@@ -20,6 +20,7 @@ export const Controlbar = ({appState, setAppState, areMarkersVisible, setMarkers
   const isPlacingLineStartState = appState === AppStates.PLACING_LINE_START;
   const isPlacingLineEndState = appState === AppStates.PLACING_LINE_END;
   const isPlacingLineState = isPlacingLineStartState || isPlacingLineEndState;
+
   const shouldExtraMarkerButtonsRender = markers.length > 0;
   const shouldExtraLineButtonsRender = lines.length > 0;
 

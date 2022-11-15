@@ -1,11 +1,16 @@
 import mapboxgl, { Marker, LngLatLike, AnySourceData, AnyLayer } from 'mapbox-gl';
+import { mean } from 'lodash';
 import { Line } from './types';
 
 const getFormattedCurrentDate = (): string => {
   const now = new Date();
-  const [month, day, year] = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+  const [day, month, year] = [now.getDate(), now.getMonth() + 1, now.getFullYear()];
   return `${day}.${month}.${year}`;
 }
+
+const getFormattedArithmeticMean = (numbers: number[], toDigit: number): number => Number(mean(numbers).toFixed(toDigit));
+
+const getLineMid = ([lngStart, latStart]: number[], [lngEnd, latEnd]: number[]): LngLatLike => ({lng: getFormattedArithmeticMean([lngStart, lngEnd], 4), lat: getFormattedArithmeticMean([latStart, latEnd], 4)});
 
 export const createNewMarker = (lng: number, lat: number): Marker => {
   const markerDescription = getFormattedCurrentDate();
@@ -29,6 +34,7 @@ export const createNewMarker = (lng: number, lat: number): Marker => {
 let counter = 0;
 
 export const createNewLine = (lineStart: number[], lineEnd: number[]): Line => {
+  getLineMid(lineStart, lineEnd);
   const lineData: GeoJSON.Feature = {
     type: 'Feature',
     geometry: {
@@ -47,7 +53,7 @@ export const createNewLine = (lineStart: number[], lineEnd: number[]): Line => {
   const lineId = `line-${counter}`;
   const lineSourceId = `line-${counter}-source`;
   const popup = new mapboxgl.Popup()
-    .setLngLat(lineStart as LngLatLike) // todo fix
+    .setLngLat(getLineMid(lineStart, lineEnd))
     .setHTML((
       `<h3>${lineData.properties?.title}</h3><p>${lineData.properties?.description}</p>`
     ))
