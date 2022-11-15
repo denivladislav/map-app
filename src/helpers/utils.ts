@@ -1,6 +1,8 @@
-import mapboxgl, { Marker, Map, EventData, Popup } from 'mapbox-gl';
+import mapboxgl, { Marker, Map, Popup, LngLatLike, AnySourceData, AnyLayer } from 'mapbox-gl';
 
 export interface Line {
+  lineSource: AnySourceData,
+  lineLayer: AnyLayer,
   lineId: string,
   lineSourceId: string,
   popup: Popup,
@@ -27,7 +29,6 @@ export const createNewMarker = (lng: number, lat: number, map: Map): Marker => {
           `<h3>${markerTitle}</h3><p>${markerDescription}</p>`
         )
     )
-    .addTo(map)
 
   return newMarker;
 }
@@ -35,7 +36,7 @@ export const createNewMarker = (lng: number, lat: number, map: Map): Marker => {
 let counter = 0;
 
 export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map): Line => {
-  const line: GeoJSON.Feature = {
+  const lineData: GeoJSON.Feature = {
     type: 'Feature',
     geometry: {
       type: 'LineString',
@@ -52,13 +53,18 @@ export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map):
 
   const lineId = `line-${counter}`;
   const lineSourceId = `line-${counter}-source`;
+  const popup = new mapboxgl.Popup()
+    .setLngLat(lineStart as LngLatLike) // todo fix
+    .setHTML((
+      `<h3>${lineData.properties?.title}</h3><p>${lineData.properties?.description}</p>`
+    ))
 
-  map.addSource(lineSourceId, {
+  const lineSource: AnySourceData = {
     type: 'geojson',
-    data: line,
-  });
-
-  map.addLayer({
+    data: lineData,
+  }
+  
+  const lineLayer: AnyLayer = {
     id: lineId,
     type: 'line',
     source: lineSourceId,
@@ -70,29 +76,9 @@ export const createNewLine = (lineStart: number[], lineEnd: number[], map: Map):
       'line-color': '#888',
       'line-width': 8
     }
-  });
-
-  const popup = new mapboxgl.Popup();
-
-  map.on('click', lineId, (e: EventData) => {
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    popup
-      .setLngLat(coordinates[0])
-      .setHTML((
-        `<h3>${line.properties?.title}</h3><p>${line.properties?.description}</p>`
-      ))
-      .addTo(map);
-  });
-
-  map.on('mouseenter', lineId, () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  map.on('mouseleave', lineId, () => {
-    map.getCanvas().style.cursor = '';
-  });
+  }
 
   counter += 1;
 
-  return {lineId, lineSourceId, popup};
+  return {lineId, lineSource, lineLayer, lineSourceId, popup};
 };
