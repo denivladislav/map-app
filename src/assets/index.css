@@ -63,6 +63,12 @@ body {
   right: 0;
 }
 
+.sidebar-helper {
+  position: absolute;
+  top: 50px;
+  left: 0;
+}
+
 .marker {
   background-image: url('./images/mapbox-icon.png');
   background-size: cover;

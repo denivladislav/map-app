@@ -78,14 +78,27 @@ export const Controlbar = ({appState, setAppState, areMarkersVisible, setMarkers
     );
   }
 
+  const renderPlacingLineHelp = () => {
+    if (!isPlacingLineState) return null;
+
+    return (
+      <div className="sidebar sidebar-helper">
+        {`Place line ${isPlacingLineStartState ? 'starting' : 'ending'} point`}
+      </div>
+    )
+  }
+
   return (
-    <div className="sidebar sidebar-top-right">
-      <>
-        {renderAddMarkerButton()}
-        {renderExtraMarkerButtons()}
-        {renderAddLineButton()}
-        {renderExtraLineButtons()}
-      </>
-    </div>
+    <>
+      <div className="sidebar sidebar-top-right">
+        <>
+          {renderAddMarkerButton()}
+          {renderExtraMarkerButtons()}
+          {renderAddLineButton()}
+          {renderExtraLineButtons()}
+        </>
+      </div>
+      {renderPlacingLineHelp()}
+    </>
   );
 }
