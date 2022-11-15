@@ -53,8 +53,6 @@ export const Controlbar = ({
 
   const handleClickRemoveMarkersButton = () => setMarkers([]);
 
-  console.log('!!');
-
   const handleClickAddLineButton = () => {
     if (isPlacingLineState) {
       setAppState(AppStates.SURFING);

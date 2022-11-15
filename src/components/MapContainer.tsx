@@ -23,7 +23,6 @@ export const MapContainer = React.forwardRef<
     { appState, setAppState, markers, setMarkers, lines, setLines, lng, lat },
     ref
   ) => {
-    console.log('!');
     const isPlacingMarkerState = appState === AppStates.PLACING_MARKER;
     const isPlacingLineStartState = appState === AppStates.PLACING_LINE_START;
     const isPlacingLineEndState = appState === AppStates.PLACING_LINE_END;
