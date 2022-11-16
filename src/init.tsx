@@ -5,6 +5,8 @@ import mapboxgl from 'mapbox-gl';
 import translationEN from './assets/locales/en.json';
 import App from './components/App';
 import { mapboxglAccessToken } from './helpers/data';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import './assets/index.css';
 
 const init = async (): Promise<JSX.Element> => {
   const i18nInstance = i18n.createInstance();

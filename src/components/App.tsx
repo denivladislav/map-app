@@ -8,6 +8,7 @@ import { mapStyle } from '../helpers/data';
 
 const App = (): JSX.Element => {
   const [appState, setAppState] = useState<AppState>(AppStates.SURFING);
+
   const [lng, setLng] = useState<number>(37.6);
   const [lat, setLat] = useState<number>(55.75);
   const [zoom, setZoom] = useState<number>(9);
@@ -15,14 +16,14 @@ const App = (): JSX.Element => {
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
 
+  const [areMarkersVisible, setMarkersVisible] = useState<boolean>(true);
+  const [areLinesVisible, setLinesVisible] = useState<boolean>(true);
+
   const prevMarkersRef = useRef<Marker[]>();
   const prevLinesRef = useRef<Line[]>();
 
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<Map | null>();
-
-  const [areMarkersVisible, setMarkersVisible] = useState<boolean>(true);
-  const [areLinesVisible, setLinesVisible] = useState<boolean>(true);
 
   useEffect(() => {
     if (map.current) return;
