@@ -7,12 +7,15 @@ A mapboxgl app.
 
 You may place markers and lines on this map.
 In order to place a marker, click «Add marker» button and the click on the map. 
-
 In order to place a line, click «Add line» button, then click on the map to place line starting point and then again to place line ending point.
+![all](https://user-images.githubusercontent.com/71961494/202122645-ea0ddddc-acba-486a-9479-3531dc9b2691.png)
 
 You may hide and remove all markers or lines.
+![markers_shown](https://user-images.githubusercontent.com/71961494/202121460-14901f67-8a74-42f2-9a02-4f0ebf3435a3.png)
+![markers_hidden](https://user-images.githubusercontent.com/71961494/202121476-d56ebc1d-4604-45de-9d59-11ad0a265c77.png)
 
 Each marker and line has a popup that contains the date of its creation.
+![line_with_popup](https://user-images.githubusercontent.com/71961494/202120988-9c6eaa84-1b5e-4f94-8387-a75c2902cab4.png)
 
 ### Stack
 - React with hooks, Typescript, mapboxgl, i18next, lodash
