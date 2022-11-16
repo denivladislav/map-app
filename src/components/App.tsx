@@ -4,10 +4,9 @@ import { Sidebar } from './Sidebar';
 import { Controlbar } from './Controlbar';
 import { MapContainer } from './MapContainer';
 import { Line, AppState, AppStates } from '../helpers/types';
+import { mapStyle } from '../helpers/data';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZGVuaXZsYWRpc2xhdiIsImEiOiJjbGFkenZ6NjkwYmpiM3ZvNmFxdWdvcDlqIn0.PIrSj3itqhXnCtuAm84lBg';
-
-const App = (): JSX.Element =>  {
+const App = (): JSX.Element => {
   const [appState, setAppState] = useState<AppState>(AppStates.SURFING);
   const [lng, setLng] = useState<number>(37.6);
   const [lat, setLat] = useState<number>(55.75);
@@ -30,16 +29,16 @@ const App = (): JSX.Element =>  {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: mapStyle,
       center: [lng, lat],
-      zoom: zoom
+      zoom: zoom,
     });
   });
 
   useEffect(() => {
     if (!map.current) return;
 
-    map.current.on('mousemove', ({lngLat}) => {
+    map.current.on('mousemove', ({ lngLat }) => {
       setLng(Number(lngLat.lng.toFixed(4)));
       setLat(Number(lngLat.lat.toFixed(4)));
     });
@@ -54,12 +53,12 @@ const App = (): JSX.Element =>  {
 
     prevMarkersRef.current?.forEach((marker) => {
       marker.remove();
-    })
+    });
 
     if (areMarkersVisible) {
       markers.forEach((marker) => {
         marker.addTo(map.current!);
-      })
+      });
     }
   }, [markers, areMarkersVisible]);
 
@@ -70,30 +69,33 @@ const App = (): JSX.Element =>  {
   useEffect(() => {
     if (!map.current) return;
 
-    prevLinesRef.current?.forEach(({lineId, lineSourceId, popup}) => {
+    prevLinesRef.current?.forEach(({ lineId, lineSourceId, popup }) => {
       map.current?.removeLayer(lineId);
       map.current?.removeSource(lineSourceId);
       popup.remove();
     });
 
-    lines.forEach(({lineId, lineSource, lineLayer, lineSourceId, popup}) => {
+    lines.forEach(({ lineId, lineSource, lineLayer, lineSourceId, popup }) => {
       map.current?.addSource(lineSourceId, lineSource);
       map.current?.addLayer(lineLayer);
       map.current?.on('click', lineId, () => {
         popup.addTo(map.current!);
       });
-    
+
       map.current?.on('mouseenter', lineId, () => {
         map.current!.getCanvas().style.cursor = 'pointer';
       });
-    
+
       map.current?.on('mouseleave', lineId, () => {
         map.current!.getCanvas().style.cursor = '';
       });
 
-      map.current?.setLayoutProperty(lineId, 'visibility', areLinesVisible ? 'visible': 'none');
+      map.current?.setLayoutProperty(
+        lineId,
+        'visibility',
+        areLinesVisible ? 'visible' : 'none'
+      );
     });
-
   }, [lines, areLinesVisible]);
 
   useEffect(() => {
@@ -103,10 +105,31 @@ const App = (): JSX.Element =>  {
   return (
     <>
       <Sidebar lng={lng} lat={lat} zoom={zoom} />
-      <Controlbar appState={appState} setAppState={setAppState} areMarkersVisible={areMarkersVisible} setMarkersVisible={setMarkersVisible} markers={markers} areLinesVisible={areLinesVisible} setLinesVisible={setLinesVisible} lines={lines} setLines={setLines} setMarkers={setMarkers} />
-      <MapContainer appState={appState} setAppState={setAppState} markers={markers} setMarkers={setMarkers} lines={lines} setLines={setLines} lng={lng} lat={lat} ref={mapContainer}/>
+      <Controlbar
+        appState={appState}
+        setAppState={setAppState}
+        areMarkersVisible={areMarkersVisible}
+        setMarkersVisible={setMarkersVisible}
+        markers={markers}
+        areLinesVisible={areLinesVisible}
+        setLinesVisible={setLinesVisible}
+        lines={lines}
+        setLines={setLines}
+        setMarkers={setMarkers}
+      />
+      <MapContainer
+        appState={appState}
+        setAppState={setAppState}
+        markers={markers}
+        setMarkers={setMarkers}
+        lines={lines}
+        setLines={setLines}
+        lng={lng}
+        lat={lat}
+        ref={mapContainer}
+      />
     </>
   );
-}
+};
 
 export default App;

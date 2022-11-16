@@ -2,7 +2,7 @@ install:
 	npm install
 
 lint:
-	npx eslint . --ext js,jsx
+	npx eslint . --ext ts,tsx
 
 start:
 	npm start
