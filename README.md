@@ -38,6 +38,7 @@ $ make start
 
 # Lint.
 $ make lint
+```
 
 ### Deploy
 This app is deployed to Vercel.
