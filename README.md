@@ -9,7 +9,7 @@ You may place markers and lines on this map.
 In order to place a marker, click «Add marker» button and the click on the map. 
 In order to place a line, click «Add line» button, then click on the map to place line starting point and then again to place line ending point.
 
-![all](https://user-images.githubusercontent.com/71961494/202122645-ea0ddddc-acba-486a-9479-3531dc9b2691.png)
+![all](https://user-images.githubusercontent.com/71961494/202123486-864f566c-e37b-4936-bfd0-f3c574876ed8.png)
 
 You may hide and remove all markers or lines.
 
