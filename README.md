@@ -38,3 +38,8 @@ $ make start
 
 # Lint.
 $ make lint
+
+### Deploy
+This app is deployed to Vercel.
+
+Follow <a href="https://map-app-swart.vercel.app/">this link</a> to start.
