@@ -56,11 +56,11 @@ const App = (): JSX.Element => {
       marker.remove();
     });
 
-    if (areMarkersVisible) {
-      markers.forEach((marker) => {
-        marker.addTo(map.current!);
-      });
-    }
+    if (!areMarkersVisible) return;
+
+    markers.forEach((marker) => {
+      marker.addTo(map.current!);
+    });
   }, [markers, areMarkersVisible]);
 
   useEffect(() => {
