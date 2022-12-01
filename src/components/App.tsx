@@ -6,7 +6,7 @@ import { MapContainer } from './MapContainer';
 import { Line, AppState, AppStates } from '../helpers/types';
 import { mapStyle } from '../helpers/data';
 
-const App = (): JSX.Element => {
+const App = ({ isTesting }: { isTesting: boolean }): JSX.Element => {
   const [appState, setAppState] = useState<AppState>(AppStates.SURFING);
 
   const [lng, setLng] = useState<number>(37.6);
@@ -33,6 +33,7 @@ const App = (): JSX.Element => {
       style: mapStyle,
       center: [lng, lat],
       zoom: zoom,
+      testMode: isTesting,
     });
   });
 

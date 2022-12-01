@@ -25,7 +25,7 @@ const init = async (): Promise<JSX.Element> => {
   return (
     <I18nextProvider i18n={i18nInstance}>
       <React.StrictMode>
-        <App />
+        <App isTesting={false} />
       </React.StrictMode>
     </I18nextProvider>
   );

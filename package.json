@@ -15,6 +15,7 @@
     ]
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
     "@types/jest": "^29.2.2",
     "@types/lodash": "^4.14.189",
     "@types/mapbox-gl": "^2.7.7",
@@ -34,7 +35,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +51,7 @@
   "license": "MIT",
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1",
+    "@testing-library/react": "^12.1.2",
     "husky": "^4.3.8",
     "lint-staged": "^13.0.3"
   }

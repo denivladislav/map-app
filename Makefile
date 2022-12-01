@@ -9,3 +9,6 @@ build:
 
 start:
 	npm start
+
+test:
+	npm test
