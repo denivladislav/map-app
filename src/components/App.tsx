@@ -1,17 +1,29 @@
 import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl, { Map, Marker } from 'mapbox-gl';
+import mapboxgl, {
+  GeoJSONSource,
+  Map,
+  MapLayerMouseEvent,
+  Marker,
+} from 'mapbox-gl';
 import { Sidebar } from './Sidebar';
 import { Controlbar } from './Controlbar';
 import { MapContainer } from './MapContainer';
 import { Line, AppState, AppStates } from '../helpers/types';
 import { mapStyle } from '../helpers/data';
+import {
+  DEFAULT_LAT,
+  DEFAULT_LNG,
+  DEFAULT_ZOOM,
+  LINES_LAYER_ID,
+  LINES_LAYER_SOURCE_ID,
+} from '../const';
 
 const App = ({ isTesting }: { isTesting: boolean }): JSX.Element => {
   const [appState, setAppState] = useState<AppState>(AppStates.SURFING);
 
-  const [lng, setLng] = useState<number>(37.6);
-  const [lat, setLat] = useState<number>(55.75);
-  const [zoom, setZoom] = useState<number>(9);
+  const [lng, setLng] = useState<number>(DEFAULT_LNG);
+  const [lat, setLat] = useState<number>(DEFAULT_LAT);
+  const [zoom, setZoom] = useState<number>(DEFAULT_ZOOM);
 
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
@@ -35,10 +47,6 @@ const App = ({ isTesting }: { isTesting: boolean }): JSX.Element => {
       zoom: zoom,
       testMode: isTesting,
     });
-  });
-
-  useEffect(() => {
-    if (!map.current) return;
 
     map.current.on('mousemove', ({ lngLat }) => {
       setLng(Number(lngLat.lng.toFixed(4)));
@@ -46,7 +54,39 @@ const App = ({ isTesting }: { isTesting: boolean }): JSX.Element => {
     });
 
     map.current.on('move', () => {
-      setZoom(Number(map.current!.getZoom().toFixed(2)));
+      setZoom(Number(map.current?.getZoom().toFixed(2)));
+    });
+
+    map.current.on('load', () => {
+      map.current?.addSource(LINES_LAYER_SOURCE_ID, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [],
+        },
+      });
+
+      map.current?.addLayer({
+        id: LINES_LAYER_ID,
+        source: LINES_LAYER_SOURCE_ID,
+        type: 'line',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round',
+        },
+        paint: {
+          'line-color': '#888',
+          'line-width': 8,
+        },
+      });
+
+      map.current?.on('mouseenter', LINES_LAYER_ID, () => {
+        map.current!.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.current?.on('mouseleave', LINES_LAYER_ID, () => {
+        map.current!.getCanvas().style.cursor = '';
+      });
     });
   });
 
@@ -69,35 +109,41 @@ const App = ({ isTesting }: { isTesting: boolean }): JSX.Element => {
   }, [markers]);
 
   useEffect(() => {
-    if (!map.current) return;
+    if (!map.current || !map.current.loaded()) return;
 
-    prevLinesRef.current?.forEach(({ lineId, lineSourceId, popup }) => {
-      map.current?.removeLayer(lineId);
-      map.current?.removeSource(lineSourceId);
+    prevLinesRef.current?.forEach(({ popup }) => {
       popup.remove();
     });
 
-    lines.forEach(({ lineId, lineSource, lineLayer, lineSourceId, popup }) => {
-      map.current?.addSource(lineSourceId, lineSource);
-      map.current?.addLayer(lineLayer);
-      map.current?.on('click', lineId, () => {
-        popup.addTo(map.current!);
-      });
+    const newLineFeatures = lines.map(({ lineData }) => lineData);
+    const lineSource = map.current.getSource(
+      LINES_LAYER_SOURCE_ID,
+    ) as GeoJSONSource;
 
-      map.current?.on('mouseenter', lineId, () => {
-        map.current!.getCanvas().style.cursor = 'pointer';
-      });
-
-      map.current?.on('mouseleave', lineId, () => {
-        map.current!.getCanvas().style.cursor = '';
-      });
-
-      map.current?.setLayoutProperty(
-        lineId,
-        'visibility',
-        areLinesVisible ? 'visible' : 'none'
-      );
+    lineSource?.setData({
+      type: 'FeatureCollection',
+      features: newLineFeatures,
     });
+
+    const handleLineClick = (e: MapLayerMouseEvent) => {
+      const feature = e.features?.[0];
+      const title = feature?.properties?.title;
+      if (!title) return;
+
+      const popup = lines.find((line) => line.lineId === title)?.popup;
+      popup?.addTo(map.current!);
+    };
+    map.current?.on('click', LINES_LAYER_ID, handleLineClick);
+
+    map.current?.setLayoutProperty(
+      LINES_LAYER_ID,
+      'visibility',
+      areLinesVisible ? 'visible' : 'none',
+    );
+
+    return () => {
+      map.current?.off('click', LINES_LAYER_ID, handleLineClick);
+    };
   }, [lines, areLinesVisible]);
 
   useEffect(() => {

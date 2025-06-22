@@ -1,4 +1,5 @@
-import { Popup, AnySourceData, AnyLayer } from 'mapbox-gl';
+import { Popup } from 'mapbox-gl';
+import { Feature, Geometry, GeoJsonProperties } from 'geojson';
 
 export enum AppStates {
   SURFING = 'SURFING',
@@ -10,8 +11,7 @@ export enum AppStates {
 export type AppState = keyof typeof AppStates;
 
 export interface Line {
-  lineSource: AnySourceData;
-  lineLayer: AnyLayer;
+  lineData: Feature<Geometry, GeoJsonProperties>;
   lineId: string;
   lineSourceId: string;
   popup: Popup;
